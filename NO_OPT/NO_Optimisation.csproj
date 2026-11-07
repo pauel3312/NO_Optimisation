@@ -61,19 +61,6 @@
         <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <Compile Remove="Server\GroundVehicleOptimisations.cs" />
-      <None Include="Server\GroundVehicleOptimisations.cs" />
-      <Compile Remove="HeadlessServer\MemoryDiagnostics.cs" />
-      <None Include="HeadlessServer\MemoryDiagnostics.cs" />
-      <Compile Remove="Client\ClientLiveryDiagnostics.cs" />
-      <None Include="Client\ClientLiveryDiagnostics.cs" />
-      <Compile Remove="Client\ClientUiDiagnostics.cs" />
-      <None Include="Client\ClientUiDiagnostics.cs" />
-      <Compile Remove="Client\ClientUiDiagnosticsModule.cs" />
-      <None Include="Client\ClientUiDiagnosticsModule.cs" />
-    </ItemGroup>
-
     <Target Name="PostBuild" AfterTargets="Build" Condition="'$(Configuration)' == 'Release' AND '$(ModDestination)' != ''">
         <!-- Create an item for all .dll files in the output directory -->
         <CreateItem Include="$(OutDir)*.dll">
