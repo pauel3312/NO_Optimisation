@@ -74,42 +74,40 @@ internal sealed class ClientLiveryOptimisation : OptimisationModule
                     return;
                 }
                 
-                if (preflight.Decision == PreflightDecision.Safe)
+                switch (preflight.Decision)
                 {
-                    Plugin.Log($"Workshop entry {key} approved to load, entering vanilla LoadImpl");
-                    loadedHandle = await key.LoadImpl(aircraft, folder);
-                    success = loadedHandle.IsValid();
-                    Plugin.Log($"Workshop LoadImpl finished for {key} successfully: {success}");
-                    if (cancel.IsCancellationRequested)
-                    {
-                        ReleaseHandle(ref loadedHandle);
-                        return;
-                    }
-                    
-                    if (success)
-                    {
-                        behaviour.SetLivery(loadedHandle.Result);
-                        var previousHandle = behaviour.handle;
-                        behaviour.handle = loadedHandle;
-                        loadedHandle = default;
-                        ReleaseHandle(ref previousHandle);
-                        Plugin.Log($"Workshop livery {key} applied");
-                    }
-                }
-                else
-                {
-                    switch (preflight.Decision)
-                    {
-                        case PreflightDecision.Rgb24:
-                            Plugin.Log($"Workshop livery load for {key} blocked, it's in RGB24 format " +
-                                       $"(Texture \"{preflight.TextureName}\", {preflight.Width}x{preflight.Height})");
-                            break;
+                    case PreflightDecision.Safe:
+                        Plugin.Log($"Workshop entry {key} approved to load, entering vanilla LoadImpl");
+                        loadedHandle = await key.LoadImpl(aircraft, folder);
+                        success = loadedHandle.IsValid();
+                        Plugin.Log($"Workshop LoadImpl finished for {key} successfully: {success}");
+                        if (cancel.IsCancellationRequested)
+                        {
+                            ReleaseHandle(ref loadedHandle);
+                            return;
+                        }
                         
-                        default:
-                            Plugin.LogWarning($"Workshop livery load for {key} blocked, it's in unknown format: " +
-                                              $"\"{preflight.Reason}\"");
-                            break;
-                    }
+                        if (success)
+                        {
+                            behaviour.SetLivery(loadedHandle.Result);
+                            var previousHandle = behaviour.handle;
+                            behaviour.handle = loadedHandle;
+                            loadedHandle = default;
+                            ReleaseHandle(ref previousHandle);
+                            Plugin.Log($"Workshop livery {key} applied");
+                        }
+                        break;
+                    
+                    case PreflightDecision.Rgb24:
+                        Plugin.Log($"Workshop livery load for {key} blocked, it's in RGB24 format " +
+                                   $"(Texture \"{preflight.TextureName}\", {preflight.Width}x{preflight.Height})");
+                        break;
+                    
+                    case PreflightDecision.Failed:
+                    default:
+                        Plugin.LogWarning($"Workshop livery load for {key} blocked, it's in unknown format: " +
+                                          $"\"{preflight.Reason}\"");
+                        break;
                 }
             }
         }
@@ -144,6 +142,8 @@ internal sealed class ClientLiveryOptimisation : OptimisationModule
         handle = default;
     }
     
+    
+    // TODO add cancellationToken support
     private static async UniTask<PreflightResult> GetOrStartPreflight(ulong workshopId, string folder)
     {
         if (Cache.TryGetValue(workshopId, out var cached))
@@ -222,7 +222,7 @@ internal sealed class ClientLiveryOptimisation : OptimisationModule
                     continue;
                 
                 var assets = manager.LoadAssetsFileFromBundle(bundle, fileIndex);
-                if (assets == null || assets.file == null)
+                if (assets?.file == null)
                     return PreflightResult.Failed($"Could not open serialised assets file \"{fileNames[fileIndex]}\".");
                 
                 if (!assets.file.Metadata.TypeTreeEnabled)
@@ -234,9 +234,9 @@ internal sealed class ClientLiveryOptimisation : OptimisationModule
                     if (!TryReadTextureMetadata(manager, assets, textureInfo, out var texture, out var failure))
                         return PreflightResult.Failed($"Texture2D metadata could not be read: {failure}", textureCount);
                     
-                    // To-do: find potentially safe versions (small enough resolution/mipcount?) which still allow
-                    // loading RGB24 texture formats without a (massive) frametime stutter
-                    // For now, block any and all RGB24
+                    // Todo: find potentially safe versions (small enough resolution/mipcount?) which still allow
+                    //  loading RGB24 texture formats without a (massive) frametime stutter
+                    //  For now, block any and all RGB24
                     if (texture.Format == (int)TextureFormat.RGB24)
                         return PreflightResult.Rgb24(texture.Name, texture.Width, texture.Height, texture.MipCount,
                             textureCount);
@@ -407,27 +407,22 @@ internal sealed class ClientLiveryOptimisation : OptimisationModule
         internal int Format { get; }
     }
     
-    private readonly struct PreflightResult
+    private readonly struct PreflightResult(
+        PreflightDecision decision,
+        int textureCount,
+        string textureName,
+        int width,
+        int height,
+        int mipCount,
+        string reason)
     {
-        private PreflightResult(PreflightDecision decision, int textureCount, string textureName, int width, int height,
-            int mipCount, string reason)
-        {
-            Decision = decision;
-            TextureCount = textureCount;
-            TextureName = textureName;
-            Width = width;
-            Height = height;
-            MipCount = mipCount;
-            Reason = reason;
-        }
-        
-        internal PreflightDecision Decision { get; }
-        internal int TextureCount { get; }
-        internal string TextureName { get; }
-        internal int Width { get; }
-        internal int Height { get; }
-        private int MipCount { get; }
-        internal string Reason { get; }
+        internal PreflightDecision Decision { get; } = decision;
+        internal int TextureCount { get; } = textureCount;
+        internal string TextureName { get; } = textureName;
+        internal int Width { get; } = width;
+        internal int Height { get; } = height;
+        private int MipCount { get; } = mipCount;
+        internal string Reason { get; } = reason;
         
         internal static PreflightResult Safe(int textureCount) =>
             new(PreflightDecision.Safe, textureCount, string.Empty, 0, 0, 0, string.Empty);
