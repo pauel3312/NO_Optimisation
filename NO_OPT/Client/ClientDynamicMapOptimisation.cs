@@ -28,13 +28,13 @@ internal sealed class ClientDynamicMapOptimisation : OptimisationModule
     
     protected override void Configure()
     {
-        _minimisedMapUps = Bind("--- Client ---", "3. Dynamic Map Update Rate", 60f);
-        _viewportCullingEnabled = Bind("--- Client - Map ---", "0. Minimised Map Culling", true,
+        _minimisedMapUps = Config.Bind("--- Client ---", "3. Dynamic Map Update Rate", 60f);
+        _viewportCullingEnabled = Config.Bind("--- Client - Map ---", "0. Minimised Map Culling", true,
             "Hide unit map icons outside the visible minimap area " +
             "(vanilla normally redundantly keeps rendering icons that are off screen on the minimap).");
-        _viewportOverscan = Bind("--- Client - Map ---", "1. Minimised Map Culling Extra Margin", 15f,
+        _viewportOverscan = Config.Bind("--- Client - Map ---", "1. Minimised Map Culling Extra Margin", 15f,
             "Extra percentage outside the visible minimap where units are still rendered to prevent a late icon pop in.");
-        _objectiveMapUps = Bind("--- Client - Map ---", "2. Objective Map Update Rate", 2f,
+        _objectiveMapUps = Config.Bind("--- Client - Map ---", "2. Objective Map Update Rate", 2f,
             "Map objective marker update refresh speed (per second). Since map objectives don't tend to move a lot, " +
             "reducing how often their marker updates is essentially free performance savings. 0 = full rate / vanilla.");
         

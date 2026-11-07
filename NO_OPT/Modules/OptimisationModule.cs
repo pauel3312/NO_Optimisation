@@ -85,9 +85,6 @@ internal abstract class OptimisationModule
     {
     }
     
-    protected ConfigEntry<T> Bind<T>(string section, string key, T defaultValue, string description = "") =>
-        Config.Bind(section, key, defaultValue, description);
-    
     protected void Watch<T>(ConfigEntry<T> entry, Action onChanged)
     {
         EventHandler handler = (_, _) => onChanged();

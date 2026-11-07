@@ -31,17 +31,17 @@ internal sealed class ClientVisualBulletOptimisation : OptimisationModule
     protected override void Configure()
     {
         _reducedTracerKeepPercent =
-            Bind("--- Client - Visual Bullets ---", "1. Reduced Tracer Keep Percent", 100f);
+            Config.Bind("--- Client - Visual Bullets ---", "1. Reduced Tracer Keep Percent", 100f);
         _reducedNonTracerKeepPercent =
-            Bind("--- Client - Visual Bullets ---", "1. Reduced Non-Tracer Keep Percent", 50f);
+            Config.Bind("--- Client - Visual Bullets ---", "1. Reduced Non-Tracer Keep Percent", 50f);
         _farTracerKeepPercent =
-            Bind("--- Client - Visual Bullets ---", "2. Far Tracer Keep Percent", 50f);
+            Config.Bind("--- Client - Visual Bullets ---", "2. Far Tracer Keep Percent", 50f);
         _farNonTracerKeepPercent =
-            Bind("--- Client - Visual Bullets ---", "2. Far Non-Tracer Keep Percent", 10f);
+            Config.Bind("--- Client - Visual Bullets ---", "2. Far Non-Tracer Keep Percent", 10f);
         _strategicTracerKeepPercent =
-            Bind("--- Client - Visual Bullets ---", "3. Strategic Tracer Keep Percent", 0f);
+            Config.Bind("--- Client - Visual Bullets ---", "3. Strategic Tracer Keep Percent", 0f);
         _strategicNonTracerKeepPercent =
-            Bind("--- Client - Visual Bullets ---", "3. Strategic Non-Tracer Keep Percent", 0f);
+            Config.Bind("--- Client - Visual Bullets ---", "3. Strategic Non-Tracer Keep Percent", 0f);
         
         Watch(_reducedTracerKeepPercent, RefreshSettings);
         Watch(_reducedNonTracerKeepPercent, RefreshSettings);
