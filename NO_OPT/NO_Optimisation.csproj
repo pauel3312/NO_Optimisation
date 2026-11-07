@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Game_Path>Y:\Games\steamapps\common\Nuclear Option\NuclearOption_Data\Managed</Game_Path>
-        <ModDestination>$(Game_Path)\..\..\BepInEx\plugins</ModDestination>
+        <Game_Path>$(HOME)/.local/share/Steam/steamapps/common/Nuclear Option/NuclearOption_Data/Managed</Game_Path>
+        <ModDestination>$(Game_Path)/../../BepInEx/plugins</ModDestination>
 
         <TargetFramework>net48</TargetFramework>
         <AssemblyName>Apul.NO_Optimisation</AssemblyName>
@@ -42,19 +42,19 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Reference Include="Assembly-CSharp" HintPath="$(Game_Path)\Assembly-CSharp.dll" Private="False" Publicize="True">
+        <Reference Include="Assembly-CSharp" HintPath="$(Game_Path)/Assembly-CSharp.dll" Private="False" Publicize="True">
             <Aliases>global,NuclearOption</Aliases>
         </Reference>
-        <Reference Include="Mirage" HintPath="$(Game_Path)\Mirage.dll" Private="False" Publicize="True"/>
-        <Reference Include="Rewired_Core" HintPath="$(Game_Path)\Rewired_Core.dll" Private="False" Publicize="True"/>
-        <Reference Include="Unity.RenderPipelines.Universal.Runtime" HintPath="$(Game_Path)\Unity.RenderPipelines.Universal.Runtime.dll" Private="False" Publicize="True"/>
-        <Reference Include="Unity.RenderPipelines.Core.Runtime" HintPath="$(Game_Path)\Unity.RenderPipelines.Core.Runtime.dll" Private="False" Publicize="True"/>
-        <Reference Include="UnityEngine.UI" HintPath="$(Game_Path)\UnityEngine.UI.dll" Private="False" Publicize="True"/>
-        <Reference Include="Unity.TextMeshPro" HintPath="$(Game_Path)\Unity.TextMeshPro.dll" Private="False" Publicize="True"/>
-        <Reference Include="UniTask" HintPath="$(Game_Path)\UniTask.dll" Private="False" Publicize="True"/>
-        <Reference Include="Unity.Addressables" HintPath="$(Game_Path)\Unity.Addressables.dll" Private="False" Publicize="True"/>
-        <Reference Include="Unity.ResourceManager" HintPath="$(Game_Path)\Unity.ResourceManager.dll" Private="False" Publicize="True"/>
-        <Reference Include="com.rlabrecque.steamworks.net" HintPath="$(Game_Path)\com.rlabrecque.steamworks.net.dll" Private="False" Publicize="True"/>
+        <Reference Include="Mirage" HintPath="$(Game_Path)/Mirage.dll" Private="False" Publicize="True"/>
+        <Reference Include="Rewired_Core" HintPath="$(Game_Path)/Rewired_Core.dll" Private="False" Publicize="True"/>
+        <Reference Include="Unity.RenderPipelines.Universal.Runtime" HintPath="$(Game_Path)/Unity.RenderPipelines.Universal.Runtime.dll" Private="False" Publicize="True"/>
+        <Reference Include="Unity.RenderPipelines.Core.Runtime" HintPath="$(Game_Path)/Unity.RenderPipelines.Core.Runtime.dll" Private="False" Publicize="True"/>
+        <Reference Include="UnityEngine.UI" HintPath="$(Game_Path)/UnityEngine.UI.dll" Private="False" Publicize="True"/>
+        <Reference Include="Unity.TextMeshPro" HintPath="$(Game_Path)/Unity.TextMeshPro.dll" Private="False" Publicize="True"/>
+        <Reference Include="UniTask" HintPath="$(Game_Path)/UniTask.dll" Private="False" Publicize="True"/>
+        <Reference Include="Unity.Addressables" HintPath="$(Game_Path)/Unity.Addressables.dll" Private="False" Publicize="True"/>
+        <Reference Include="Unity.ResourceManager" HintPath="$(Game_Path)/Unity.ResourceManager.dll" Private="False" Publicize="True"/>
+        <Reference Include="com.rlabrecque.steamworks.net" HintPath="$(Game_Path)/com.rlabrecque.steamworks.net.dll" Private="False" Publicize="True"/>
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
@@ -81,10 +81,7 @@
         </CreateItem>
 
         <!-- Copy the build output -->
-        <Message Text="Copying build output assemblies from $(OutDir)*.dll to $(ModDestination)\$(AssemblyName)-$(Configuration)" Importance="high"/>
-        <Copy SourceFiles="@(DllFiles)" DestinationFolder="$(ModDestination)\$(AssemblyName)"/>
-
-        <Message Text="Copying build output assemblies from $(OutDir)*.dll to Y:\NOServers\ApulTest1\BepInEx\plugins\$(AssemblyName)" Importance="high"/>
-        <Copy SourceFiles="@(DllFiles)" DestinationFolder="Y:\NOServer\servers\ApulTest1\BepInEx\plugins\$(AssemblyName)"/>
+        <Message Text="Copying build output assemblies from $(OutDir)*.dll to $(ModDestination)/$(AssemblyName)-$(Configuration)" Importance="high"/>
+        <Copy SourceFiles="@(DllFiles)" DestinationFolder="$(ModDestination)/$(AssemblyName)"/>
     </Target>
 </Project>
