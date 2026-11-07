@@ -1,7 +1,9 @@
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using BepInEx;
 using BepInEx.Bootstrap;
 using UnityEngine;
 
@@ -55,13 +57,10 @@ internal static class GwWeaponDamageCompatibility
     
     private static Assembly? ResolveGrayWarAssembly()
     {
-        foreach (var pluginInfo in Chainloader.PluginInfos.Values)
+        // ReSharper disable once RedundantEnumerableCastCall
+        foreach (var assembly in Chainloader.PluginInfos.Values.OfType<PluginInfo>()
+                     .Select(pluginInfo => pluginInfo.Instance.GetType().Assembly))
         {
-            var plugin = pluginInfo.Instance;
-            if (plugin == null)
-                continue;
-            
-            var assembly = plugin.GetType().Assembly;
             if (assembly.GetType(GrayWarPluginType, false) != null)
                 return assembly;
         }

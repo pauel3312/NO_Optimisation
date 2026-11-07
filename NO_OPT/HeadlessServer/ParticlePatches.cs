@@ -376,6 +376,9 @@ internal sealed partial class HeadlessServerOptimisations
                     num2 = Mathf.Clamp01(__instance.powerSupply.DrawPower(powerRequested) / __instance.power);
                 }
                 
+                // TODO use PRF's version of the method only if available, else use regular linecast (user does not necessarily want to have this)
+                //  Check GwWeaponDamageCompat to check for how to do this using delegates.
+                //  PRF's version lives in GunSelfDamageFix.
                 // Prevent laser self damage to owner unit
                 if (LaserSelfDamageFix.LinecastIgnoringOwner(__instance.directionTransform.position, vector,
                         out var hitInfo, ~PhysicsLayers.ExclusionZonesMask, __instance.attachedUnit))

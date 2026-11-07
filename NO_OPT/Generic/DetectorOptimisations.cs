@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Runtime.CompilerServices;
 using HarmonyLib;
 using NO_OPT.Modules;
@@ -10,9 +11,9 @@ namespace NO_OPT.Generic;
           "massively boost client FPS and server UPS on scenery prop-heavy maps.")]
 internal sealed class DetectorOptimisations : OptimisationModule
 {
-    // TO-DO: Check how much of this all is even needed on a remote client/non host?
-    // seems to intentionally be running on client without IsServer for GameManager.IsLocalAircraft(attachedUnit)
-    // but what part(s) are even necessary there?
+    // TODO: Check how much of this all is even needed on a remote client/non host?
+    //  seems to intentionally be running on client without IsServer for GameManager.IsLocalAircraft(attachedUnit)
+    //  but what part(s) are even necessary there?
     
     [HarmonyPatch]
     internal static class DetectorPatches
@@ -42,12 +43,11 @@ internal sealed class DetectorOptimisations : OptimisationModule
             var detected = __instance.detectedTargets;
             var ownHq = __instance.attachedUnit.NetworkHQ;
             var maxSpeed = __instance.maxSpeed;
-            foreach (var unit in units)
+            // ReSharper disable once RedundantEnumerableCastCall
+            foreach (var unit in units.OfType<Unit>().Where(unit =>
+                         unit is not Scenery && unit.NetworkHQ != ownHq && !unit.disabled && !(unit.speed > maxSpeed) &&
+                         !detected.Contains(unit)))
             {
-                if (unit == null || unit is Scenery || unit.NetworkHQ == ownHq || unit.disabled ||
-                    unit.speed > maxSpeed || detected.Contains(unit))
-                    continue;
-                
                 DetectorManager.RequestLoSCheck(__instance, unit);
             }
             

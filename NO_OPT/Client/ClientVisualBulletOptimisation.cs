@@ -30,6 +30,7 @@ internal sealed class ClientVisualBulletOptimisation : OptimisationModule
     
     protected override void Configure()
     {
+        // TODO clean up config sections and name formats.
         _reducedTracerKeepPercent =
             Config.Bind("--- Client - Visual Bullets ---", "1. Reduced Tracer Keep Percent", 100f);
         _reducedNonTracerKeepPercent =

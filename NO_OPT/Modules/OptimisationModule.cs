@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using BepInEx.Configuration;
 using HarmonyLib;
 
@@ -85,9 +86,11 @@ internal abstract class OptimisationModule
     {
     }
     
-    protected void Watch<T>(ConfigEntry<T> entry, Action onChanged)
+    protected void Watch<T>(ConfigEntry<T> entry, Action onChanged) => Watch(entry, (_, _) => onChanged());
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected void Watch<T>(ConfigEntry<T> entry, EventHandler handler)
     {
-        EventHandler handler = (_, _) => onChanged();
         entry.SettingChanged += handler;
         _unsubscribe.Add(() => entry.SettingChanged -= handler);
     }

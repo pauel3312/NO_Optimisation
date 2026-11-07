@@ -5,18 +5,12 @@ using System.Reflection;
 
 namespace NO_OPT.Modules;
 
-internal sealed class ModuleManager : IDisposable
+internal sealed class ModuleManager(Plugin host, bool headless) : IDisposable
 {
-    private readonly Plugin _host;
     private readonly List<OptimisationModule> _modules = [];
-    private readonly ModuleScope _runtimeScope;
+    private readonly ModuleScope _runtimeScope = headless ? ModuleScope.Headless : ModuleScope.Client;
     private bool _clientMasterEnabled = true;
     
-    internal ModuleManager(Plugin host, bool headless)
-    {
-        _host = host;
-        _runtimeScope = headless ? ModuleScope.Headless : ModuleScope.Client;
-    }
     
     public void Dispose()
     {
@@ -48,7 +42,7 @@ internal sealed class ModuleManager : IDisposable
             try
             {
                 module = (OptimisationModule)Activator.CreateInstance(definition.Type, true)!;
-                module.ConfigureCore(_host, definition.Attribute!);
+                module.ConfigureCore(host, definition.Attribute!);
                 if (definition.Attribute!.Scope == ModuleScope.Client && definition.Attribute.RespectClientMaster)
                     module.SetManagerEnabledCore(_clientMasterEnabled);
                 _modules.Add(module);
@@ -67,11 +61,8 @@ internal sealed class ModuleManager : IDisposable
     internal void SetClientMasterEnabled(bool enabled)
     {
         _clientMasterEnabled = enabled;
-        foreach (var module in _modules)
+        foreach (var module in _modules.Where(module => module.Metadata is { Scope: ModuleScope.Client, RespectClientMaster: true }))
         {
-            if (module.Metadata.Scope != ModuleScope.Client || !module.Metadata.RespectClientMaster)
-                continue;
-            
             module.SetManagerEnabledCore(enabled);
         }
     }
