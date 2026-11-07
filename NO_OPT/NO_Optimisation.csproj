@@ -15,8 +15,8 @@
         <PackageTags>nuclear;option;bepinex</PackageTags>
 
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageProjectUrl>https://github.com/Appulcake/NO_Optimisation</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/Appulcake/NO_Optimisation</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/Pauel3312/NO_Optimisation</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Pauel3312/NO_Optimisation</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
 
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
